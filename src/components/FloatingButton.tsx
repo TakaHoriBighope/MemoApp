@@ -1,15 +1,21 @@
-import { View, Text, StyleSheet } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  type ViewStyle,
+  TouchableOpacity,
+} from "react-native";
 
 type Props = {
-  children: string;
+  children: JSX.Element;
+  style?: ViewStyle;
 };
 
 const FloatingButton = (props: Props): JSX.Element => {
-  const { children } = props;
+  const { children, style } = props;
   return (
-    <View style={styles.floatingButton}>
+    <TouchableOpacity style={[styles.floatingButton, style]}>
       <Text style={styles.floatingButtonLabel}>{children}</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 const styles = StyleSheet.create({
@@ -24,9 +30,9 @@ const styles = StyleSheet.create({
     right: 40,
     bottom: 40,
     shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    shadowOffset: { width: 5, height: 8 },
     elevation: 8,
   },
   floatingButtonLabel: {
