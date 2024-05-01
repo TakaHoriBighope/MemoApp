@@ -1,48 +1,16 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import Header from "../components/Header";
+import MemoListItem from "../components/MemoListItem";
+import FloatingButton from "../components/FloatingButton";
 
 const Index = (): JSX.Element => {
   return (
     <View style={styles.container}>
-      <View>
-        <View>
-          <Text>Memo App</Text>
-          <Text>Log out</Text>
-        </View>
-      </View>
-      <View>
-        <View>
-          <View>
-            <Text>買い物リスト</Text>
-            <Text>2024年5月1日　10：00</Text>
-          </View>
-          <View>
-            <Text>x</Text>
-          </View>
-        </View>
-
-        <View>
-          <View>
-            <Text>買い物リスト</Text>
-            <Text>2024年5月1日　10：00</Text>
-          </View>
-          <View>
-            <Text>x</Text>
-          </View>
-        </View>
-
-        <View>
-          <View>
-            <Text>買い物リスト</Text>
-            <Text>2024年5月1日　10：00</Text>
-          </View>
-          <View>
-            <Text>x</Text>
-          </View>
-        </View>
-      </View>
-      <View>
-        <Text>+</Text>
-      </View>
+      <Header />
+      <MemoListItem />
+      <MemoListItem />
+      <MemoListItem />
+      <FloatingButton>+</FloatingButton>
     </View>
   );
 };
@@ -50,8 +18,7 @@ const Index = (): JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "#ffffff",
   },
 });
 export default Index;
