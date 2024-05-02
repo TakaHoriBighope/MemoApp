@@ -4,18 +4,22 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
 } from "react-native";
-import Header from "../../components/Header";
 import FloatingButton from "../../components/FloatingButton";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { router } from "expo-router";
+
+const handlePress = (): void => {
+  // router.push("/memo/Detail");
+  router.back();
+};
 
 const Edit = (): JSX.Element => {
   return (
     <KeyboardAvoidingView style={styles.container} behavior="height">
-      <Header />
       <View style={styles.textContainer}>
         <TextInput multiline style={styles.input} value={`買い物\nリスト`} />
       </View>
-      <FloatingButton style={{}}>
+      <FloatingButton onPress={handlePress}>
         <FontAwesome6 name="check" size={24} color="white" />
       </FloatingButton>
     </KeyboardAvoidingView>

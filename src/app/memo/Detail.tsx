@@ -1,14 +1,17 @@
 import { View, Text, ScrollView, StyleSheet } from "react-native";
-import Header from "../../components/Header";
 import FloatingButton from "../../components/FloatingButton";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
+import { router } from "expo-router";
+
+const handlePress = (): void => {
+  router.push("/memo/Edit");
+};
 
 const Detail = (): JSX.Element => {
   return (
     <View style={styles.container}>
-      <Header />
       <View style={styles.memoHeader}>
         <Text style={styles.memoTitle}>買い物リスト</Text>
         <Text style={styles.memoDate}>2024年5月1日　10：00</Text>
@@ -25,7 +28,7 @@ const Detail = (): JSX.Element => {
           ウクライナのゼレンスキー大統領は４月、ショルツ氏が「ドイツが核武装していない」ことを理由に長射程ミサイル供与を拒んだと明かした。ウクライナは英仏から長射程ミサイルの提供を受け、ロシアが併合したクリミア半島で露軍施設を攻撃している。核兵器を持たないドイツは英仏と異なり、ロシアの報復に強い懸念を抱いているということだ。
         </Text>
       </ScrollView>
-      <FloatingButton style={{ top: 130, bottom: "auto" }}>
+      <FloatingButton onPress={handlePress} style={{ top: 60, bottom: "auto" }}>
         <Entypo name="edit" size={30} />
       </FloatingButton>
     </View>

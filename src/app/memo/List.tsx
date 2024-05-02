@@ -1,17 +1,31 @@
 import { View, StyleSheet } from "react-native";
-import Header from "../../components/Header";
 import MemoListItem from "../../components/MemoListItem";
 import FloatingButton from "../../components/FloatingButton";
 import { Feather } from "@expo/vector-icons";
+import { router, useNavigation } from "expo-router";
+import { useEffect } from "react";
+import LogOutButton from "../../components/LogOutButton";
 
-const List = (): JSX.Element => {
+const handlePress = (): void => {
+  router.push("/memo/Create");
+};
+
+const Index = (): JSX.Element => {
+  const navigation = useNavigation();
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => {
+        return <LogOutButton />;
+      },
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Header />
       <MemoListItem />
       <MemoListItem />
       <MemoListItem />
-      <FloatingButton>
+      <FloatingButton onPress={handlePress}>
         <Feather name="plus" size={30} />
       </FloatingButton>
     </View>
@@ -24,4 +38,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
 });
-export default List;
+export default Index;

@@ -8,12 +8,13 @@ import {
 type Props = {
   children: JSX.Element;
   style?: ViewStyle;
+  onPress?: () => void;
 };
 
 const FloatingButton = (props: Props): JSX.Element => {
-  const { children, style } = props;
+  const { children, style, onPress } = props;
   return (
-    <TouchableOpacity style={[styles.floatingButton, style]}>
+    <TouchableOpacity onPress={onPress} style={[styles.floatingButton, style]}>
       <Text style={styles.floatingButtonLabel}>{children}</Text>
     </TouchableOpacity>
   );
