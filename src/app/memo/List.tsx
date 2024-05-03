@@ -1,17 +1,23 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
+import { router, useNavigation } from "expo-router";
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+
 import MemoListItem from "../../components/MemoListItem";
 import FloatingButton from "../../components/FloatingButton";
 import { Feather } from "@expo/vector-icons";
-import { router, useNavigation } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import LogOutButton from "../../components/LogOutButton";
+import { auth, db } from "../../config";
+import { type Memo } from "../../types/memo";
 
 const handlePress = (): void => {
-  router.push("/memo/Create");
+  router.replace("/memo/Create");
 };
 
-const Index = (): JSX.Element => {
+const List = (): JSX.Element => {
   const navigation = useNavigation();
+  const [memos, setMemos] = useState<Memo[]>([]);
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => {
@@ -20,11 +26,33 @@ const Index = (): JSX.Element => {
     });
   }, []);
 
+  useEffect(() => {
+    if (auth.currentUser === null) {
+      return;
+    }
+    const ref = collection(db, `users/${auth.currentUser.uid}/memos`);
+    const q = query(ref, orderBy("updatedAt", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const remoteMemos: Memo[] = [];
+      snapshot.forEach((doc) => {
+        const { bodyText, updatedAt } = doc.data();
+        remoteMemos.push({
+          id: doc.id,
+          bodyText,
+          updatedAt,
+        });
+      });
+      setMemos(remoteMemos);
+    });
+    return unsubscribe;
+  }, []);
+
   return (
     <View style={styles.container}>
-      <MemoListItem />
-      <MemoListItem />
-      <MemoListItem />
+      <FlatList
+        data={memos}
+        renderItem={({ item }) => <MemoListItem memo={item} />}
+      />
       <FloatingButton onPress={handlePress}>
         <Feather name="plus" size={30} />
       </FloatingButton>
@@ -38,4 +66,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
 });
-export default Index;
+export default List;

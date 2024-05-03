@@ -1,24 +1,50 @@
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  KeyboardAvoidingView,
-} from "react-native";
+import { View, TextInput, StyleSheet } from "react-native";
 import FloatingButton from "../../components/FloatingButton";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { db, auth } from "../../config";
+import { useState } from "react";
+import KeyboardAvoidingView from "../../components/KeyboardAvoidingView";
 
-const handlePress = (): void => {
-  router.back();
+const handlePress = (bodyText: string): void => {
+  if (auth.currentUser === null) {
+    return;
+  }
+  const ref = collection(db, `users/${auth.currentUser.uid}/memos`);
+  addDoc(ref, {
+    bodyText,
+    updatedAt: Timestamp.fromDate(new Date()),
+  })
+    .then((docRef) => {
+      router.replace("/memo/List");
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
 const Create = (): JSX.Element => {
+  const [bodyText, setBodyText] = useState("");
+
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="height">
+    <KeyboardAvoidingView style={styles.container}>
       <View style={styles.textContainer}>
-        <TextInput multiline style={styles.input} value="" />
+        <TextInput
+          multiline
+          style={styles.input}
+          value={bodyText}
+          onChangeText={(text) => {
+            setBodyText(text);
+          }}
+          autoFocus
+        />
       </View>
-      <FloatingButton onPress={handlePress}>
+      <FloatingButton
+        onPress={() => {
+          handlePress(bodyText);
+        }}
+      >
         <FontAwesome6 name="check" size={24} color="white" />
       </FloatingButton>
     </KeyboardAvoidingView>
