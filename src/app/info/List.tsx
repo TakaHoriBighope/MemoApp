@@ -2,21 +2,22 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { router, useNavigation } from "expo-router";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 
-import MemoListItem from "../../components/MemoListItem";
+import InfoListItem from "../../components/InfoListItem";
 import FloatingButton from "../../components/FloatingButton";
 import { Feather } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import LogOutButton from "../../components/LogOutButton";
 import { auth, db } from "../../config";
-import { type Memo } from "../../types/memo";
+import { type Info } from "../../types/info";
 
 const handlePress = (): void => {
-  router.replace("/memo/Create");
+  router.push("/info/Create");
+  // router.replace("/info/Create");
 };
 
 const List = (): JSX.Element => {
   const navigation = useNavigation();
-  const [memos, setMemos] = useState<Memo[]>([]);
+  const [infos, setInfos] = useState<Info[]>([]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -30,19 +31,22 @@ const List = (): JSX.Element => {
     if (auth.currentUser === null) {
       return;
     }
-    const ref = collection(db, `users/${auth.currentUser.uid}/memos`);
-    const q = query(ref, orderBy("updatedAt", "desc"));
+    const ref = collection(db, "infos");
+    const q = query(ref, orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const remoteMemos: Memo[] = [];
+      const remoteInfos: Info[] = [];
       snapshot.forEach((doc) => {
-        const { bodyText, updatedAt } = doc.data();
-        remoteMemos.push({
+        const { desc, imgURL, uid, likes, createdAt } = doc.data();
+        remoteInfos.push({
           id: doc.id,
-          bodyText,
-          updatedAt,
+          desc,
+          imgURL,
+          uid,
+          likes,
+          createdAt,
         });
       });
-      setMemos(remoteMemos);
+      setInfos(remoteInfos);
     });
     return unsubscribe;
   }, []);
@@ -50,8 +54,8 @@ const List = (): JSX.Element => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={memos}
-        renderItem={({ item }) => <MemoListItem memo={item} />}
+        data={infos}
+        renderItem={({ item }) => <InfoListItem info={item} />}
       />
       <FloatingButton onPress={handlePress}>
         <Feather name="plus" size={30} />

@@ -6,15 +6,20 @@ import { useState, useEffect } from "react";
 import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
 import { auth, db } from "../../config";
 import KeyboardAvoidingView from "../../components/KeyboardAvoidingView";
+import { Info } from "../../types/info";
 
-const handlePress = (id: string, bodyText: string): void => {
+const handlePress = (id: string, info: Info): void => {
   if (auth.currentUser == null) {
     return;
   }
-  const ref = doc(db, `users/${auth.currentUser.uid}/memos`, id);
+  const { desc, imgURL, likes, uid } = info;
+  const ref = doc(db, "infos", id);
   setDoc(ref, {
-    bodyText,
-    updatedAt: Timestamp.fromDate(new Date()),
+    desc,
+    imgURL,
+    likes,
+    uid,
+    createdAt: Timestamp.fromDate(new Date()),
   })
     .then(() => {
       router.back();
@@ -26,17 +31,33 @@ const handlePress = (id: string, bodyText: string): void => {
 
 const Edit = (): JSX.Element => {
   const id = String(useLocalSearchParams().id);
-  const [bodyText, setBodyText] = useState("");
+  // const [desc, setDesc] = useState("");
+  const [info, setInfo] = useState<Info>({
+    id: "",
+    desc: "",
+    createdAt: Timestamp.fromDate(new Date()),
+    imgURL: "",
+    likes: [],
+    uid: "",
+  });
 
   useEffect(() => {
     if (auth.currentUser === null) {
       return;
     }
-    const ref = doc(db, `users/${auth.currentUser.uid}/memos`, id);
+    const ref = doc(db, "infos", id);
     getDoc(ref)
-      .then((docRef) => {
-        const remoteBodyText = docRef?.data()?.bodyText;
-        setBodyText(remoteBodyText);
+      .then((infoDoc) => {
+        // setDesc(desc);
+        const { desc, imgURL, uid, likes, createdAt } = infoDoc.data() as Info;
+        setInfo({
+          id: infoDoc.id,
+          desc,
+          imgURL,
+          uid,
+          likes,
+          createdAt,
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -50,16 +71,17 @@ const Edit = (): JSX.Element => {
         <TextInput
           multiline
           style={styles.input}
-          value={bodyText}
+          value={info?.desc}
           onChangeText={(text) => {
-            setBodyText(text);
+            // setDesc(text);
+            setInfo({ ...info, desc: text });
           }}
           autoFocus
         />
       </View>
       <FloatingButton
         onPress={() => {
-          handlePress(id, bodyText);
+          handlePress(id, info);
         }}
       >
         <FontAwesome6 name="check" size={24} color="white" />
